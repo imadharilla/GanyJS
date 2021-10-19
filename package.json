@@ -1,6 +1,6 @@
 {
-  "name": "ganyjs",
-  "version": "0.7.1",
+  "name": "ganyjs-digi",
+  "version": "0.0.1",
   "description": "3-D Scientific visualization using ThreeJS",
   "keywords": [
     "3D",
@@ -8,20 +8,11 @@
     "visualization",
     "threejs"
   ],
-  "homepage": "https://github.com/QuantStack/GanyJS",
-  "bugs": {
-    "url": "https://github.com/QuantStack/GanyJS/issues"
-  },
-  "license": "BSD-3-Clause",
-  "author": {
-    "name": "Martin Renou",
-    "email": "martin.renou@gmail.com"
-  },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/QuantStack/GanyJS"
+    "url": "https://github.com/imadharilla/GanyJS"
   },
   "scripts": {
     "build": "tsc",
