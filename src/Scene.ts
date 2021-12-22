@@ -119,6 +119,10 @@ export class Renderer {
   resize() {
     const { width, height } = this.el.getBoundingClientRect();
 
+    const canvas = this.renderer.domElement;
+    // do not resize in case of canvas size didn't change
+    if (canvas.width === width && canvas.height === height) return;
+
     this.renderer.setSize(width, height);
 
     this.camera.aspect = width / height;
