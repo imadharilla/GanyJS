@@ -1,21 +1,14 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 
-import {
-  TrackballControls
-} from 'three/examples/jsm/controls/TrackballControls';
+import { TrackballControls } from "three/examples/jsm/controls/TrackballControls";
 
-import {
-  Block
-} from './Block';
-
+import { Block } from "./Block";
 
 /**
  * 3-D Scene class
  */
-export
-class Scene {
-
-  constructor () {
+export class Scene {
+  constructor() {
     this.scene = new THREE.Scene();
 
     // lighting
@@ -29,23 +22,31 @@ class Scene {
   /**
    * Add an GanyJS block to the scene
    */
-  addBlock (block: Block) {
+  addBlock(block: Block) {
     this.blocks.push(block);
     block.addToScene(this.scene);
   }
 
-  handleCameraMove (cameraPosition: THREE.Vector3, cameraTarget: THREE.Vector3) {
-    this.directionalLight.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
-    this.directionalLight.target.position.set(cameraTarget.x, cameraTarget.y, cameraTarget.z);
+  handleCameraMove(cameraPosition: THREE.Vector3, cameraTarget: THREE.Vector3) {
+    this.directionalLight.position.set(
+      cameraPosition.x,
+      cameraPosition.y,
+      cameraPosition.z
+    );
+    this.directionalLight.target.position.set(
+      cameraTarget.x,
+      cameraTarget.y,
+      cameraTarget.z
+    );
   }
 
-  handleCameraMoveEnd (cameraPosition: THREE.Vector3) {
+  handleCameraMoveEnd(cameraPosition: THREE.Vector3) {
     for (const block of this.blocks) {
       block.handleCameraMoveEnd(cameraPosition);
     }
   }
 
-  dispose () {
+  dispose() {
     this.scene.dispose();
 
     for (const block of this.blocks) {
@@ -57,38 +58,33 @@ class Scene {
   blocks: Block[] = [];
 
   private directionalLight: THREE.DirectionalLight;
-
 }
-
 
 /**
  * 3-D Renderer class
  */
-export
-class Renderer {
-
-  constructor (el: HTMLElement, scene: Scene) {
+export class Renderer {
+  constructor(el: HTMLElement, scene: Scene) {
     this.el = el;
 
     this.scene = scene;
   }
 
-  initialize () {
+  initialize() {
     const { width, height } = this.el.getBoundingClientRect();
 
-    this.camera = new THREE.PerspectiveCamera(
-      50,
-      width / height,
-      0.001,
-      99999
-    );
+    this.camera = new THREE.PerspectiveCamera(50, width / height, 0.001, 99999);
     this.camera.position.z = 2;
 
     // Renderer
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, logarithmicDepthBuffer: true });
+    this.renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true,
+      logarithmicDepthBuffer: true,
+    });
     this.renderer.autoClear = false;
 
-    this.color = 'white';
+    this.color = "white";
     this.opacity = 1;
     this.clearColor = new THREE.Color(this.color);
     this.renderer.setClearColor(this.clearColor, this.opacity);
@@ -99,10 +95,7 @@ class Renderer {
     this.el.appendChild(this.renderer.domElement);
 
     // Controls
-    this.controls = new TrackballControls(
-      this.camera,
-      this.el
-    );
+    this.controls = new TrackballControls(this.camera, this.el);
 
     this.controls.screen.width = width;
     this.controls.screen.height = height;
@@ -112,8 +105,8 @@ class Renderer {
     this.controls.panSpeed = 0.9;
     this.controls.dynamicDampingFactor = 0.9;
 
-    this.controls.addEventListener('change', this.handleCameraMove.bind(this));
-    this.controls.addEventListener('end', this.handleCameraMoveEnd.bind(this));
+    this.controls.addEventListener("change", this.handleCameraMove.bind(this));
+    this.controls.addEventListener("end", this.handleCameraMoveEnd.bind(this));
 
     this.handleCameraMove();
 
@@ -123,7 +116,7 @@ class Renderer {
   /**
    * Resize renderer
    */
-  resize () {
+  resize() {
     const { width, height } = this.el.getBoundingClientRect();
 
     this.renderer.setSize(width, height);
@@ -137,63 +130,66 @@ class Renderer {
     this.controls.screen.height = height;
   }
 
-  set backgroundColor (color: string) {
+  set backgroundColor(color: string) {
     this.color = color;
     this.clearColor = new THREE.Color(this.color);
 
     this.renderer.setClearColor(this.clearColor, this.opacity);
   }
 
-  set backgroundOpacity (opacity: number) {
+  set backgroundOpacity(opacity: number) {
     this.opacity = opacity;
 
     this.renderer.setClearColor(this.clearColor, this.opacity);
   }
 
-  set cameraPosition (position: THREE.Vector3) {
+  set cameraPosition(position: THREE.Vector3) {
     this.camera.position.set(position.x, position.y, position.z);
   }
 
-  get cameraPosition () {
+  get cameraPosition() {
     return this.camera.position;
   }
 
-  set cameraRotation (rotation: THREE.Quaternion) {
+  set cameraRotation(rotation: THREE.Quaternion) {
     this.camera.quaternion.set(rotation.x, rotation.y, rotation.z, rotation.w);
   }
 
-  get cameraRotation () : THREE.Quaternion {
+  get cameraRotation(): THREE.Quaternion {
     return this.camera.quaternion;
   }
 
-  set cameraTarget (position: THREE.Vector3) {
+  set cameraTarget(position: THREE.Vector3) {
     this.controls.target.set(position.x, position.y, position.z);
   }
 
-  get cameraTarget () {
+  get cameraTarget() {
     return this.controls.target;
   }
 
-  set cameraUp (up: THREE.Vector3) {
+  set cameraUp(up: THREE.Vector3) {
     this.camera.up.set(up.x, up.y, up.z);
   }
 
-  get cameraUp () {
+  get cameraUp() {
     return this.camera.up;
   }
 
   /**
    * Animation
    */
-  private animate () {
+  private animate() {
     this.animationID = window.requestAnimationFrame(this.animate.bind(this));
+    this.resize();
 
     for (const block of this.scene.blocks) {
       if (block.beforeRenderHook !== null) {
-        block.beforeRenderHook(
-          this.renderer,
-          {scene: this.scene.scene, camera: this.camera, clearColor: this.clearColor, clearOpacity: this.opacity}
-        );
+        block.beforeRenderHook(this.renderer, {
+          scene: this.scene.scene,
+          camera: this.camera,
+          clearColor: this.clearColor,
+          clearOpacity: this.opacity,
+        });
       }
     }
 
@@ -206,15 +202,15 @@ class Renderer {
     this.controls.update();
   }
 
-  handleCameraMove () {
+  handleCameraMove() {
     this.scene.handleCameraMove(this.camera.position, this.controls.target);
   }
 
-  handleCameraMoveEnd () {
+  handleCameraMoveEnd() {
     this.scene.handleCameraMoveEnd(this.camera.position);
   }
 
-  dispose () {
+  dispose() {
     window.cancelAnimationFrame(this.animationID);
 
     this.controls.dispose();
@@ -230,12 +226,11 @@ class Renderer {
   controls: TrackballControls;
   renderer: THREE.WebGLRenderer;
 
-  materialVersions: { [keys: string]: number; } = {};
+  materialVersions: { [keys: string]: number } = {};
 
   private animationID: number;
 
   private color: string;
   private clearColor: THREE.Color;
   private opacity: number;
-
 }
