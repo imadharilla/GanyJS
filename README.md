@@ -7,5 +7,5 @@
 You can install using `npm`:
 
 ```bash
-npm install --save GanyJS
+npm install --save ganyjs-digi
 ```
